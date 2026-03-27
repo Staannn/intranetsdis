@@ -818,8 +818,8 @@ body {
         </div>
       </div>
       <div class="field">
-        <label>Adresse e-mail</label>
-        <input type="email" id="auth-email" placeholder="prenom.nom@sdis-unreallife.fr" autocomplete="email">
+        <label>Matricule</label>
+        <input type="text" id="auth-email" placeholder="ex : 613298" autocomplete="username">
       </div>
       <div class="field">
         <label>Mot de passe</label>
@@ -1326,17 +1326,17 @@ body {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, setDoc, serverTimestamp }
+import { getFirestore, collection, getDocs, getDoc, doc, setDoc, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ─── FIREBASE CONFIG (à remplacer par vos vraies clés) ───
 const firebaseConfig = {
-  apiKey: "VOTRE_API_KEY",
-  authDomain: "VOTRE_PROJECT.firebaseapp.com",
-  projectId: "VOTRE_PROJECT_ID",
-  storageBucket: "VOTRE_PROJECT.appspot.com",
-  messagingSenderId: "VOTRE_SENDER_ID",
-  appId: "VOTRE_APP_ID"
+  apiKey: "AIzaSyAXWn6qmcsLapO1CNOpSXUaWOZifRL6XE0",
+  authDomain: "sdis-unreallife.firebaseapp.com",
+  projectId: "sdis-unreallife",
+  storageBucket: "sdis-unreallife.firebasestorage.app",
+  messagingSenderId: "232681898451",
+  appId: "1:232681898451:web:763c683a796bb9b00c2f26"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -1352,7 +1352,7 @@ onAuthStateChanged(auth, user => {
     document.getElementById('app').style.display = 'flex';
     const initials = (user.email || '??').slice(0,2).toUpperCase();
     document.getElementById('topbar-avatar').textContent = initials;
-    document.getElementById('topbar-email').textContent = user.email;
+    document.getElementById('topbar-email').textContent = 'MAT · ' + (window._matricule || 'inconnu');
     loadPersonnel();
     loadRecentDocs();
   } else {
@@ -1363,7 +1363,7 @@ onAuthStateChanged(auth, user => {
 
 // ─── LOGIN ───
 window.doLogin = async function() {
-  const email = document.getElementById('auth-email').value.trim();
+  const matricule = document.getElementById('auth-email').value.trim();
   const pw = document.getElementById('auth-password').value;
   const errEl = document.getElementById('auth-error');
   const btn = document.getElementById('btn-login');
@@ -1371,9 +1371,14 @@ window.doLogin = async function() {
   btn.disabled = true;
   btn.textContent = 'Connexion en cours…';
   try {
-    await signInWithEmailAndPassword(auth, email, pw);
+    const matriculeDoc = await getDoc(doc(db, 'matricules', matricule));
+    if (!matriculeDoc.exists()) throw new Error('Matricule inconnu');
+    const fakeEmail = matriculeDoc.data().email;
+    window._matricule = matricule;
+    await signInWithEmailAndPassword(auth, fakeEmail, pw);
   } catch(e) {
-    let msg = 'Identifiants incorrects. Vérifiez votre adresse et mot de passe.';
+    let msg = 'Identifiants incorrects. Vérifiez votre matricule et mot de passe.';
+    if (e.message === 'Matricule inconnu') msg = 'Matricule inconnu.';
     if (e.code === 'auth/too-many-requests') msg = 'Trop de tentatives. Réessayez dans quelques minutes.';
     errEl.textContent = msg;
     errEl.style.display = 'block';
