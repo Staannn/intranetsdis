@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDIS UnrealLife — Portail intranet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --rouge: #C0392B;
+  --rouge-fonce: #922B21;
+  --rouge-vif: #E74C3C;
+  --bleu: #1A3A5C;
+  --bleu-clair: #2471A3;
+  --bleu-pale: #D6EAF8;
+  --or: #D4AC0D;
+  --or-pale: #FEF9E7;
+  --gris: #2C3E50;
+  --gris-clair: #ECF0F1;
+  --gris-moyen: #85929E;
+  --blanc: #FFFFFF;
+  --texte: #1C2833;
+  --texte-sec: #566573;
+  --vert: #1E8449;
+  --orange: #CA6F1E;
+  --surface: #F8F9FA;
+  --border: rgba(0,0,0,0.08);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--surface);
+  color: var(--texte);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── AUTH SCREEN ── */
+#auth-screen {
+  position: fixed; inset: 0;
+  background: var(--bleu);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  flex-direction: column;
+  gap: 0;
+}
+
+.auth-card {
+  background: var(--blanc);
+  width: 100%;
+  max-width: 400px;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.auth-header {
+  background: var(--rouge);
+  padding: 28px 32px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 3px solid var(--rouge-fonce);
+}
+
+.auth-header .emblem {
+  width: 52px; height: 52px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--blanc);
+  letter-spacing: 0.5px;
+  border: 2px solid rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+
+.auth-header .title-block { flex: 1; }
+.auth-header h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--blanc);
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+.auth-header .subtitle {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.auth-body { padding: 28px 32px 32px; }
+
+.marianne {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.marianne .rf-text {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--texte-sec);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.marianne .tricolor {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin: 6px auto 0;
+  width: 36px;
+}
+.tricolor span {
+  height: 4px;
+  flex: 1;
+  border-radius: 1px;
+}
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--texte-sec);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.field input {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--texte);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.field input:focus { border-color: var(--rouge); }
+
+.btn-connexion {
+  width: 100%;
+  padding: 12px;
+  background: var(--rouge);
+  color: var(--blanc);
+  border: none;
+  border-radius: 4px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s;
+}
+.btn-connexion:hover { background: var(--rouge-fonce); }
+.btn-connexion:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.auth-error {
+  background: #FADBD8;
+  border: 1px solid #E74C3C;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #922B21;
+  margin-top: 12px;
+  display: none;
+}
+
+.auth-footer {
+  padding: 14px 32px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--gris-moyen);
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ── APP LAYOUT ── */
+#app { display: none; flex: 1; flex-direction: column; min-height: 100vh; }
+
+/* Top bar */
+.topbar {
+  background: var(--rouge);
+  color: var(--blanc);
+  display: flex;
+  align-items: center;
+  height: 52px;
+  padding: 0 20px;
+  gap: 16px;
+  border-bottom: 3px solid var(--rouge-fonce);
+  position: sticky; top: 0; z-index: 100;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+.topbar-emblem {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  color: var(--blanc);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.5px;
+}
+.topbar-sub {
+  font-size: 10px;
+  font-weight: 400;
+  opacity: 0.7;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-left: 4px;
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.topbar-user .avatar {
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 11px;
+  border: 1.5px solid rgba(255,255,255,0.3);
+}
+.topbar-user .email { opacity: 0.8; }
+
+.btn-deconnexion {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: var(--blanc);
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: background 0.15s;
+}
+.btn-deconnexion:hover { background: rgba(255,255,255,0.2); }
+
+/* ── MAIN LAYOUT ── */
+.main-wrap {
+  display: flex;
+  flex: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: var(--bleu);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 52px);
+}
+
+.sidebar-section {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-section-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  padding: 10px 16px 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.65);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.12s;
+  border-left: 3px solid transparent;
+  user-select: none;
+}
+.nav-item:hover {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.9);
+}
+.nav-item.active {
+  background: rgba(255,255,255,0.1);
+  color: var(--blanc);
+  border-left-color: var(--rouge-vif);
+}
+.nav-icon {
+  width: 18px; height: 18px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  color: rgba(255,255,255,0.7);
+}
+.nav-item.active .nav-icon {
+  background: var(--rouge);
+  color: var(--blanc);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,0.2);
+  line-height: 1.6;
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  padding: 28px 32px;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* Page header */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.page-header h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--texte);
+  letter-spacing: 0.3px;
+}
+.page-header .page-sub {
+  font-size: 12px;
+  color: var(--texte-sec);
+  margin-top: 3px;
+  font-weight: 400;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  font-size: 11px;
+  color: var(--texte-sec);
+  margin-bottom: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.breadcrumb .sep { opacity: 0.4; }
+
+/* Cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: var(--blanc);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  border-color: rgba(0,0,0,0.12);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  border-radius: 6px 0 0 6px;
+}
+.card.rouge::before { background: var(--rouge); }
+.card.bleu::before { background: var(--bleu-clair); }
+.card.vert::before { background: var(--vert); }
+.card.or::before { background: var(--or); }
+.card.orange::before { background: var(--orange); }
+.card.gris::before { background: var(--gris-moyen); }
+
+.card-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.badge-rouge { background: #FADBD8; color: var(--rouge-fonce); }
+.badge-bleu { background: #D6EAF8; color: #1A5276; }
+.badge-vert { background: #D5F5E3; color: #1E8449; }
+.badge-or { background: #FEF9E7; color: #9A7D0A; }
+.badge-orange { background: #FDEBD0; color: #784212; }
+.badge-gris { background: var(--gris-clair); color: #4D5656; }
+
+.card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--texte);
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+}
+.card-desc {
+  font-size: 12px;
+  color: var(--texte-sec);
+  line-height: 1.5;
+}
+
+/* Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: var(--blanc);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.data-table th {
+  background: var(--bleu);
+  color: var(--blanc);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  text-align: left;
+}
+.data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--texte);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--surface); }
+
+/* Pill / badge statuts */
+.pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+.pill-vert { background: #D5F5E3; color: #1A5632; }
+.pill-rouge { background: #FADBD8; color: #922B21; }
+.pill-or { background: #FEF9E7; color: #9A7D0A; }
+.pill-bleu { background: #D6EAF8; color: #1A5276; }
+.pill-gris { background: var(--gris-clair); color: #4D5656; }
+
+/* Stats bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--blanc);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--texte-sec);
+  margin-bottom: 6px;
+}
+.stat-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--texte);
+  line-height: 1;
+}
+.stat-sub {
+  font-size: 11px;
+  color: var(--texte-sec);
+  margin-top: 4px;
+}
+
+/* Section title */
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--texte-sec);
+  margin: 24px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Doc link item */
+.doc-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--blanc);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.12s;
+  box-shadow: var(--shadow);
+}
+.doc-item:hover {
+  border-color: rgba(0,0,0,0.14);
+  box-shadow: var(--shadow-md);
+}
+.doc-icon {
+  width: 32px; height: 32px;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'IBM Plex Mono', monospace;
+  flex-shrink: 0;
+}
+.doc-icon.pdf { background: #FADBD8; color: var(--rouge); }
+.doc-icon.doc { background: #D6EAF8; color: var(--bleu-clair); }
+.doc-icon.xls { background: #D5F5E3; color: var(--vert); }
+.doc-icon.lnk { background: #FDEBD0; color: var(--orange); }
+
+.doc-meta { flex: 1; min-width: 0; }
+.doc-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texte);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.doc-date {
+  font-size: 11px;
+  color: var(--texte-sec);
+  font-family: 'IBM Plex Mono', monospace;
+  margin-top: 1px;
+}
+
+.doc-arrow {
+  color: var(--gris-moyen);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* Grade badge personnalisé */
+.grade-badge {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.3px;
+}
+.grade-adj { background: #FDEBD0; color: #784212; }
+.grade-med { background: #D6EAF8; color: #1A5276; }
+.grade-inf { background: #D5F5E3; color: #1E8449; }
+.grade-cap { background: #F9EBEA; color: #922B21; }
+.grade-sap { background: var(--gris-clair); color: var(--gris); }
+.grade-sgt { background: #EBF5FB; color: #1A5276; }
+
+/* Qualif dot */
+.qualif-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-right: 2px;
+}
+.qd-formateur { background: #2471A3; }
+.qd-apte { background: #1E8449; }
+.qd-vide { background: var(--gris-clair); }
+
+/* Alert banner */
+.alert {
+  border-radius: 5px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  border-left: 4px solid;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.alert-rouge { background: #FADBD8; border-color: var(--rouge); color: #6E2419; }
+.alert-bleu { background: #D6EAF8; border-color: var(--bleu-clair); color: #1A3A5C; }
+.alert-or { background: #FEF9E7; border-color: var(--or); color: #7D6608; }
+
+.alert-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* Loading */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  color: var(--texte-sec);
+  gap: 10px;
+  font-size: 13px;
+}
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--rouge);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsive table scroll */
+.table-wrap { overflow-x: auto; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--blanc);
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+}
+.modal-header {
+  background: var(--bleu);
+  color: var(--blanc);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-header h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+}
+.modal-close {
+  background: none; border: none; color: rgba(255,255,255,0.7);
+  cursor: pointer; font-size: 18px; padding: 0 4px;
+}
+.modal-body { padding: 20px; }
+.modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+.btn-primary { background: var(--rouge); color: var(--blanc); }
+.btn-secondary { background: var(--gris-clair); color: var(--texte); }
+.btn-primary:hover { background: var(--rouge-fonce); }
+
+/* Search bar */
+.search-bar {
+  position: relative;
+  margin-bottom: 16px;
+}
+.search-bar input {
+  width: 100%;
+  padding: 9px 12px 9px 36px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--blanc);
+  outline: none;
+}
+.search-bar input:focus { border-color: var(--rouge); }
+.search-icon {
+  position: absolute;
+  left: 12px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--gris-moyen);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 20px;
+}
+.tab {
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texte-sec);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: 0.3px;
+  transition: all 0.12s;
+}
+.tab.active {
+  color: var(--rouge);
+  border-bottom-color: var(--rouge);
+}
+.tab:hover { color: var(--texte); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ AUTH SCREEN ══════════════════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="emblem">SDIS</div>
+      <div class="title-block">
+        <h1>Service Départemental d'Incendie<br>et de Secours d'UnrealLife</h1>
+        <div class="subtitle">Portail Intranet — Accès restreint</div>
+      </div>
+    </div>
+    <div class="auth-body">
+      <div class="marianne">
+        <div class="rf-text">République Française</div>
+        <div class="tricolor">
+          <span style="background:#002395;"></span>
+          <span style="background:#EDEDED;"></span>
+          <span style="background:#ED2939;"></span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Matricule</label>
+        <input type="text" id="auth-email" placeholder="ex : 613298" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn-connexion" id="btn-login" onclick="doLogin()">Connexion</button>
+      <div class="auth-error" id="auth-error"></div>
+    </div>
+    <div class="auth-footer">
+      SDIS-UL v2.0 · Exploitation · Mise à jour : 03/09/2025
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ APP ══════════════════ -->
+<div id="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-emblem">SDIS</div>
+      <span class="topbar-title">SDIS UnrealLife</span>
+      <span class="topbar-sub">· Portail intranet</span>
+    </div>
+    <div class="topbar-user">
+      <div class="avatar" id="topbar-avatar">??</div>
+      <span class="email" id="topbar-email"></span>
+      <button class="btn-deconnexion" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="main-wrap">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Navigation</div>
+        <div class="nav-item active" data-page="accueil" onclick="navigate('accueil', this)">
+          <div class="nav-icon">⌂</div>
+          Accueil
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Opérationnel</div>
+        <div class="nav-item" data-page="sdao" onclick="navigate('sdao', this)">
+          <div class="nav-icon">SDAO</div>
+          Acteurs opérat.
+        </div>
+        <div class="nav-item" data-page="cta" onclick="navigate('cta', this)">
+          <div class="nav-icon">CTA</div>
+          CTA / CODIS
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Santé</div>
+        <div class="nav-item" data-page="sdsa" onclick="navigate('sdsa', this)">
+          <div class="nav-icon">SDSA</div>
+          Santé (SSSM)
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Administration</div>
+        <div class="nav-item" data-page="personnel" onclick="navigate('personnel', this)">
+          <div class="nav-icon">RH</div>
+          Personnel
+        </div>
+        <div class="nav-item" data-page="recrutement" onclick="navigate('recrutement', this)">
+          <div class="nav-icon">REC</div>
+          Recrutement
+        </div>
+        <div class="nav-item" data-page="remise" onclick="navigate('remise', this)">
+          <div class="nav-icon">REM</div>
+          Remise / Matériel
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        SDIS-UL Intranet v2.0<br>
+        Exploitation — 03/09/2025<br>
+        © État-Major UnrealLife
+      </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="content">
+
+      <!-- ── PAGE ACCUEIL ── -->
+      <div class="page active" id="page-accueil">
+        <div class="breadcrumb"><span>Intranet</span><span class="sep">›</span><span>Accueil</span></div>
+        <div class="page-header">
+          <div>
+            <h2>Tableau de bord</h2>
+            <div class="page-sub">Bienvenue sur le portail intranet du SDIS UnrealLife</div>
+          </div>
+        </div>
+
+        <div class="alert alert-bleu">
+          <div class="alert-icon">ℹ</div>
+          <div>Portail opérationnel. Accès strictement réservé au personnel du SDIS UnrealLife. Toute utilisation non autorisée est prohibée.</div>
+        </div>
+
+        <div class="stats-bar">
+          <div class="stat-card">
+            <div class="stat-label">Personnel actif</div>
+            <div class="stat-val">17</div>
+            <div class="stat-sub">SPP + SPV enregistrés</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Sous-directions</div>
+            <div class="stat-val">3</div>
+            <div class="stat-sub">SDAO · SDSA · RH</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Documents</div>
+            <div class="stat-val" id="doc-count">—</div>
+            <div class="stat-sub">En ligne</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Mise à jour</div>
+            <div class="stat-val" style="font-size:17px;">03/09</div>
+            <div class="stat-sub">Dernière révision</div>
+          </div>
+        </div>
+
+        <div class="section-title">Accès rapide — Sous-directions</div>
+        <div class="card-grid">
+          <div class="card rouge" onclick="navigate('sdao', document.querySelector('[data-page=sdao]'))">
+            <div class="card-badge badge-rouge">SDAO</div>
+            <div class="card-title">Acteurs Opérationnels</div>
+            <div class="card-desc">Documents EM, schémas d'encadrement, GPT Formation & Opérationnel, inventaires véhicules.</div>
+          </div>
+          <div class="card bleu" onclick="navigate('sdsa', document.querySelector('[data-page=sdsa]'))">
+            <div class="card-badge badge-bleu">SDSA</div>
+            <div class="card-title">Sous-direction Santé</div>
+            <div class="card-desc">SSSM, certificats médicaux d'aptitude, formation PISU, pharmacie, NDS santé.</div>
+          </div>
+          <div class="card or" onclick="navigate('cta', document.querySelector('[data-page=cta]'))">
+            <div class="card-badge badge-or">CTA/CODIS</div>
+            <div class="card-title">CTA / CODIS</div>
+            <div class="card-desc">Opérateurs, mémento CTA, fiche de poste, engagement ISP, ETARE SDIS 979.</div>
+          </div>
+          <div class="card vert" onclick="navigate('personnel', document.querySelector('[data-page=personnel]'))">
+            <div class="card-badge badge-vert">RH</div>
+            <div class="card-title">Tableau du Personnel</div>
+            <div class="card-desc">Grades, fonctions, qualifications, matricules — SPP et SPV.</div>
+          </div>
+          <div class="card orange" onclick="navigate('recrutement', document.querySelector('[data-page=recrutement]'))">
+            <div class="card-badge badge-orange">Recrutement</div>
+            <div class="card-title">Service Recrutement</div>
+            <div class="card-desc">NDS-RH, fiches recrutement, suivi des candidatures.</div>
+          </div>
+          <div class="card gris" onclick="navigate('remise', document.querySelector('[data-page=remise]'))">
+            <div class="card-badge badge-gris">Remise</div>
+            <div class="card-title">Remise / Matériel</div>
+            <div class="card-desc">Rapports de casse, suivi matériel, infrastructure.</div>
+          </div>
+        </div>
+
+        <div class="section-title">Derniers documents mis à jour</div>
+        <div id="recent-docs-list">
+          <div class="loading"><div class="spinner"></div>Chargement…</div>
+        </div>
+      </div>
+
+      <!-- ── PAGE SDAO ── -->
+      <div class="page" id="page-sdao">
+        <div class="breadcrumb"><span>Intranet</span><span class="sep">›</span><span>SDAO</span></div>
+        <div class="page-header">
+          <div>
+            <h2>Sous-direction des Acteurs Opérationnels</h2>
+            <div class="page-sub">Documents élaborés par l'état-major — Exploitation</div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('sdao','liaisons',this)">Fiches de liaisons</div>
+          <div class="tab" onclick="switchTab('sdao','encadrement',this)">Encadrement</div>
+          <div class="tab" onclick="switchTab('sdao','formation',this)">GPT Formation</div>
+          <div class="tab" onclick="switchTab('sdao','operationnel',this)">GPT Opérationnel</div>
+        </div>
+
+        <div class="tab-content active" id="sdao-liaisons">
+          <div class="section-title">Fiches de liaisons</div>
+          <div class="doc-item" onclick="openDoc('Modèle courrier — EM')">
+            <div class="doc-icon doc">DOC</div>
+            <div class="doc-meta">
+              <div class="doc-name">Modèle courrier — EM</div>
+              <div class="doc-date">Mis à jour 03/09/2025</div>
+            </div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('Modèle NDS — EM')">
+            <div class="doc-icon doc">DOC</div>
+            <div class="doc-meta">
+              <div class="doc-name">Modèle NDS — EM</div>
+              <div class="doc-date">Mis à jour 03/09/2025</div>
+            </div>
+            <div class="doc-arrow">›</div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="sdao-encadrement">
+          <div class="section-title">Schéma d'encadrement</div>
+          <div class="doc-item" onclick="openDoc('Modalité et engagement SSO')">
+            <div class="doc-icon doc">DOC</div>
+            <div class="doc-meta">
+              <div class="doc-name">Modalité et engagement SSO</div>
+              <div class="doc-date">Mis à jour 03/09/2025</div>
+            </div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('Règlement SP UnRealLife')">
+            <div class="doc-icon doc">DOC</div>
+            <div class="doc-meta">
+              <div class="doc-name">Règlement SP UnRealLife</div>
+              <div class="doc-date">Mis à jour 03/09/2025</div>
+            </div>
+            <div class="doc-arrow">›</div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="sdao-formation">
+          <div class="section-title">Documents relatifs au GPT Formation</div>
+          <div class="doc-item" onclick="openDoc('Recrutement SP')">
+            <div class="doc-icon doc">DOC</div>
+            <div class="doc-meta"><div class="doc-name">Recrutement SP</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('Abréviation SP')">
+            <div class="doc-icon doc">DOC</div>
+            <div class="doc-meta"><div class="doc-name">Abréviation SP</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('SDAO – GGO – OP CTA/CODIS')">
+            <div class="doc-icon pdf">PDF</div>
+            <div class="doc-meta"><div class="doc-name">SDAO – GGO – OP CTA/CODIS</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('SDAO – GGO – FORMATION CONDUCTEUR VL')">
+            <div class="doc-icon pdf">PDF</div>
+            <div class="doc-meta"><div class="doc-name">SDAO – GGO – FORMATION CONDUCTEUR VL</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('SDAO – GGO – FORMATION EQ INC')">
+            <div class="doc-icon pdf">PDF</div>
+            <div class="doc-meta"><div class="doc-name">SDAO – GGO – FORMATION EQ INC</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('SDAO – GGO – FORMATION COD 1')">
+            <div class="doc-icon pdf">PDF</div>
+            <div class="doc-meta"><div class="doc-name">SDAO – GGO – FORMATION COD 1</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('SDAO – GGO – FORMATION SR')">
+            <div class="doc-icon pdf">PDF</div>
+            <div class="doc-meta"><div class="doc-name">SDAO – GGO – FORMATION SR</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('SDSA – GOS – EQ SSUAP')">
+            <div class="doc-icon pdf">PDF</div>
+            <div class="doc-meta"><div class="doc-name">SDSA – GOS – EQ SSUAP</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('SDSA – GOS – C/A SSUAP')">
+            <div class="doc-icon pdf">PDF</div>
+            <div class="doc-meta"><div class="doc-name">SDSA – GOS – C/A SSUAP</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="sdao-operationnel">
+          <div class="section-title">Documents relatifs au GPT Opérationnel</div>
+          <div class="doc-item" onclick="openDoc('Grades sapeurs-pompiers A3URL')">
+            <div class="doc-icon doc">DOC</div>
+            <div class="doc-meta"><div class="doc-name">Grades sapeurs-pompiers A3URL</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('Fiche de poste sapeurs-pompiers')">
+            <div class="doc-icon doc">DOC</div>
+            <div class="doc-meta"><div class="doc-name">Fiche de poste sapeurs-pompiers</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="doc-item" onclick="openDoc('Dotation de base')">
+            <div class="doc-icon xls">XLS</div>
+            <div class="doc-meta"><div class="doc-name">Dotation de base</div><div class="doc-date">03/09/2025</div></div>
+            <div class="doc-arrow">›</div>
+          </div>
+          <div class="section-title">Inventaires</div>
+          <div class="doc-item" onclick="openDoc('Inventaire VSR')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">Inventaire VSR</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Inventaire CCFM')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">Inventaire CCFM</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Inventaire FPTHC')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">Inventaire FPTHC</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Inventaire VLSSSM')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">Inventaire VLSSSM</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Inventaire AR')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">Inventaire AR</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Inventaire VSAV')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">Inventaire VSAV</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Inventaire VPI')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">Inventaire VPI</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Inventaire VTU')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">Inventaire VTU</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Inventaire VSU')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">Inventaire VSU</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Inventaire CCGC')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">Inventaire CCGC</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="section-title">Services</div>
+          <div class="doc-item" onclick="openDoc('Fiche de service : Service prévision')"><div class="doc-icon doc">DOC</div><div class="doc-meta"><div class="doc-name">Fiche de service — Service prévision</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Fiche de service : Service remise – matériels – infrastructure')"><div class="doc-icon doc">DOC</div><div class="doc-meta"><div class="doc-name">Fiche de service — Remise – matériels – infrastructure</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE SDSA ── -->
+      <div class="page" id="page-sdsa">
+        <div class="breadcrumb"><span>Intranet</span><span class="sep">›</span><span>SDSA</span></div>
+        <div class="page-header">
+          <div>
+            <h2>Sous-direction de la Santé</h2>
+            <div class="page-sub">Documents SSSM — Service de Santé et de Secours Médicaux</div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('sdsa','liaisons',this)">Liaisons</div>
+          <div class="tab" onclick="switchTab('sdsa','aptitude',this)">Certificats d'aptitude</div>
+          <div class="tab" onclick="switchTab('sdsa','organisation',this)">Organisation</div>
+          <div class="tab" onclick="switchTab('sdsa','formation',this)">Formation</div>
+          <div class="tab" onclick="switchTab('sdsa','pharmacie',this)">Pharmacie</div>
+          <div class="tab" onclick="switchTab('sdsa','nds',this)">Notes de service</div>
+        </div>
+
+        <div class="tab-content active" id="sdsa-liaisons">
+          <div class="section-title">Fiches de liaisons</div>
+          <div class="doc-item" onclick="openDoc('Modèle courrier — SSSM')"><div class="doc-icon doc">DOC</div><div class="doc-meta"><div class="doc-name">Modèle courrier — SSSM</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Modèle NDS — SSSM')"><div class="doc-icon doc">DOC</div><div class="doc-meta"><div class="doc-name">Modèle NDS — SSSM</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        </div>
+
+        <div class="tab-content" id="sdsa-aptitude">
+          <div class="section-title">Certificats médicaux d'aptitude au travail</div>
+          <div class="doc-item" onclick="openDoc('Certificat médical d\'aptitude — Civil')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">Certificat médical d'aptitude — Civil</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Certificat médical d\'aptitude — GN')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">Certificat médical d'aptitude — GN</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Certificat médical d\'aptitude — SP')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">Certificat médical d'aptitude — SP</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        </div>
+
+        <div class="tab-content" id="sdsa-organisation">
+          <div class="section-title">Organisation SSSM</div>
+          <div class="doc-item" onclick="openDoc('Schéma d\'encadrement — SSSM')"><div class="doc-icon doc">DOC</div><div class="doc-meta"><div class="doc-name">Schéma d'encadrement — SSSM</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('Modalité et engagement SSO')"><div class="doc-icon doc">DOC</div><div class="doc-meta"><div class="doc-name">Modalité et engagement SSO</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('SDSA – CO – ENGAGEMENT ISP')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">SDSA – CO – ENGAGEMENT ISP</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        </div>
+
+        <div class="tab-content" id="sdsa-formation">
+          <div class="section-title">GPT Formation</div>
+          <div class="doc-item" onclick="openDoc('PISU — UnrealLife')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">PISU — UnrealLife</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('F-SSSM-P — UnrealLife')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">F-SSSM-P — UnrealLife</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item">
+            <div class="doc-icon" style="background:#FEF9E7;color:#9A7D0A;font-size:9px;font-weight:700;font-family:'IBM Plex Mono',monospace;">WIP</div>
+            <div class="doc-meta">
+              <div class="doc-name" style="color:var(--or);">PROTOCOLE SSSM — En cours de rédaction</div>
+              <div class="doc-date">Document non disponible</div>
+            </div>
+            <div class="pill pill-or">Brouillon</div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="sdsa-pharmacie">
+          <div class="section-title">GPT Pharmacie</div>
+          <div class="doc-item" onclick="openDoc('GPT Pharmacie — Matériels SSSM')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">GPT Pharmacie — Matériels SSSM</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('GPT Pharmacie — Gestion stocks/commandes')"><div class="doc-icon xls">XLS</div><div class="doc-meta"><div class="doc-name">GPT Pharmacie — Gestion stocks/commandes</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        </div>
+
+        <div class="tab-content" id="sdsa-nds">
+          <div class="section-title">Notes de service</div>
+          <div class="doc-item" onclick="openDoc('NDS-004 ADMINISTRATION MÉDICAMENTS')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">NDS-004 — Administration médicaments</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('NDS-005 SOUS DIRECTION DE SANTE')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">NDS-005 — Sous-direction de santé</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('NDS-006 L\'USAGE DU MATÉRIEL SSSM')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">NDS-006 — Usage du matériel SSSM</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+          <div class="doc-item" onclick="openDoc('NDS-007 DÉLIVRANCE DE NOURRITURE ET D\'EAU')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">NDS-007 — Délivrance de nourriture et d'eau</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE CTA ── -->
+      <div class="page" id="page-cta">
+        <div class="breadcrumb"><span>Intranet</span><span class="sep">›</span><span>CTA / CODIS</span></div>
+        <div class="page-header">
+          <div>
+            <h2>CTA / CODIS — Opérateurs</h2>
+            <div class="page-sub">Documents opérateurs CTA/CODIS — Exploitation</div>
+          </div>
+        </div>
+        <div class="section-title">Encadrement</div>
+        <div class="doc-item" onclick="openDoc('Modalité et engagement SSO')"><div class="doc-icon doc">DOC</div><div class="doc-meta"><div class="doc-name">Modalité et engagement SSO</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        <div class="section-title">GPT Formation</div>
+        <div class="doc-item" onclick="openDoc('SDAO – GGO – OP CTA/CODIS')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">SDAO – GGO – OP CTA/CODIS</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        <div class="section-title">ETARE</div>
+        <div class="doc-item" onclick="openDoc('ETARE SDIS 979')"><div class="doc-icon lnk">LNK</div><div class="doc-meta"><div class="doc-name">ETARE SDIS 979</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        <div class="section-title">GPT Opérationnel</div>
+        <div class="doc-item" onclick="openDoc('Fiche de poste CTA/CODIS')"><div class="doc-icon doc">DOC</div><div class="doc-meta"><div class="doc-name">Fiche de poste CTA/CODIS</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        <div class="doc-item" onclick="openDoc('SDSA – CO – ENGAGEMENT ISP')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">SDSA – CO – ENGAGEMENT ISP</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+        <div class="doc-item" onclick="openDoc('Memento CTA/CODIS')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">Mémento CTA/CODIS</div><div class="doc-date">03/09/2025</div></div><div class="doc-arrow">›</div></div>
+      </div>
+
+      <!-- ── PAGE PERSONNEL ── -->
+      <div class="page" id="page-personnel">
+        <div class="breadcrumb"><span>Intranet</span><span class="sep">›</span><span>Personnel</span></div>
+        <div class="page-header">
+          <div>
+            <h2>Tableau du Personnel</h2>
+            <div class="page-sub">Grades, fonctions, services et qualifications — SPP & SPV</div>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon">⌕</span>
+          <input type="text" id="personnel-search" placeholder="Rechercher un sapeur-pompier…" oninput="filterPersonnel()">
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" id="personnel-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Grade</th>
+                <th>Statut</th>
+                <th>Service(s)</th>
+                <th>Matricule</th>
+                <th>Casier</th>
+                <th>Qualifications clés</th>
+              </tr>
+            </thead>
+            <tbody id="personnel-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── PAGE RECRUTEMENT ── -->
+      <div class="page" id="page-recrutement">
+        <div class="breadcrumb"><span>Intranet</span><span class="sep">›</span><span>Recrutement</span></div>
+        <div class="page-header">
+          <div>
+            <h2>Service Recrutement</h2>
+            <div class="page-sub">Documents RH — Exploitation</div>
+          </div>
+        </div>
+        <div class="alert alert-or">
+          <div class="alert-icon">⚠</div>
+          <div>Les documents de recrutement sont à usage strictement interne. Toute diffusion externe est interdite.</div>
+        </div>
+        <div class="section-title">Notes de service</div>
+        <div class="doc-item" onclick="openDoc('NDS – RH')"><div class="doc-icon pdf">PDF</div><div class="doc-meta"><div class="doc-name">NDS — RH</div><div class="doc-date">21/09/2025</div></div><div class="doc-arrow">›</div></div>
+        <div class="section-title">Fiches de service</div>
+        <div class="doc-item" onclick="openDoc('Fiche de service : Service recrutement')"><div class="doc-icon doc">DOC</div><div class="doc-meta"><div class="doc-name">Fiche de service — Recrutement</div><div class="doc-date">21/09/2025</div></div><div class="doc-arrow">›</div></div>
+      </div>
+
+      <!-- ── PAGE REMISE ── -->
+      <div class="page" id="page-remise">
+        <div class="breadcrumb"><span>Intranet</span><span class="sep">›</span><span>Remise / Matériel</span></div>
+        <div class="page-header">
+          <div>
+            <h2>Service Remise / Matériel</h2>
+            <div class="page-sub">Suivi du matériel et de l'infrastructure</div>
+          </div>
+        </div>
+        <div class="section-title">Documents du service remise</div>
+        <div class="doc-item" onclick="window.open('https://forms.gle/uiMPHcdqL6jn7wF56', '_blank')">
+          <div class="doc-icon lnk">FORM</div>
+          <div class="doc-meta">
+            <div class="doc-name">Rapport de casse</div>
+            <div class="doc-date">Formulaire en ligne — Mis à jour 21/09/2025</div>
+          </div>
+          <div class="doc-arrow">›</div>
+        </div>
+        <div class="section-title">Fiche de service</div>
+        <div class="doc-item" onclick="openDoc('Fiche de service : Service remise – matériels – infrastructure')"><div class="doc-icon doc">DOC</div><div class="doc-meta"><div class="doc-name">Fiche de service — Remise – matériels – infrastructure</div><div class="doc-date">21/09/2025</div></div><div class="doc-arrow">›</div></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════ MODAL DOC ══════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Document</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--texte-sec);margin-bottom:16px;" id="modal-desc">
+        Ce document est hébergé dans le système documentaire du SDIS UnrealLife.
+      </p>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--texte-sec);">
+        <div>Statut : <span class="pill pill-vert">Disponible</span></div>
+        <div style="margin-top:6px;">Mis à jour : <strong id="modal-date">03/09/2025</strong></div>
+        <div style="margin-top:6px;">Source : GDocs / GSheets intranet SDIS-UL</div>
+      </div>
+      <p style="font-size:11px;color:var(--texte-sec);margin-top:12px;">
+        Pour accéder au document complet, cliquez sur "Ouvrir". Le lien Google Drive sera configuré via Firebase lors du déploiement.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Fermer</button>
+      <button class="btn btn-primary" id="modal-open-btn" onclick="closeModal()">Ouvrir le document</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ FIREBASE + LOGIC ══════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, getDoc, doc, setDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ─── FIREBASE CONFIG (à remplacer par vos vraies clés) ───
+const firebaseConfig = {
+  apiKey: "AIzaSyAXWn6qmcsLapO1CNOpSXUaWOZifRL6XE0",
+  authDomain: "sdis-unreallife.firebaseapp.com",
+  projectId: "sdis-unreallife",
+  storageBucket: "sdis-unreallife.firebasestorage.app",
+  messagingSenderId: "232681898451",
+  appId: "1:232681898451:web:763c683a796bb9b00c2f26"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+window._db = db;
+window._auth = auth;
+
+// ─── AUTH STATE ───
+onAuthStateChanged(auth, user => {
+  if (user) {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    const initials = (user.email || '??').slice(0,2).toUpperCase();
+    document.getElementById('topbar-avatar').textContent = initials;
+    document.getElementById('topbar-email').textContent = 'MAT · ' + (window._matricule || 'inconnu');
+    loadPersonnel();
+    loadRecentDocs();
+  } else {
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  }
+});
+
+// ─── LOGIN ───
+window.doLogin = async function() {
+  const matricule = document.getElementById('auth-email').value.trim();
+  const pw = document.getElementById('auth-password').value;
+  const errEl = document.getElementById('auth-error');
+  const btn = document.getElementById('btn-login');
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Connexion en cours…';
+  try {
+    const matriculeDoc = await getDoc(doc(db, 'matricules', matricule));
+    if (!matriculeDoc.exists()) throw new Error('Matricule inconnu');
+    const fakeEmail = matriculeDoc.data().email;
+    window._matricule = matricule;
+    await signInWithEmailAndPassword(auth, fakeEmail, pw);
+  } catch(e) {
+    let msg = 'Identifiants incorrects. Vérifiez votre matricule et mot de passe.';
+    if (e.message === 'Matricule inconnu') msg = 'Matricule inconnu.';
+    if (e.code === 'auth/too-many-requests') msg = 'Trop de tentatives. Réessayez dans quelques minutes.';
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Connexion';
+  }
+};
+
+// Enter key on auth
+['auth-email','auth-password'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') window.doLogin();
+  });
+});
+
+// ─── LOGOUT ───
+window.doLogout = async function() {
+  await signOut(auth);
+};
+
+// ─── PERSONNEL DATA (static fallback + Firestore) ───
+const PERSONNEL_STATIC = [
+  { nom:'Parker Lesson', grade:'Adjudant-Chef', statut:'SPP', service:'FORMATION / CTA/CODIS', mat:'560150', casier:'8', qualifs:['Formateur SSUAP','Formateur INC','Formateur SR'] },
+  { nom:'Peter Trapp', grade:'Adjudant-Chef', statut:'SPP', service:'FORMATION / PLG/SAV', mat:'578423', casier:'2', qualifs:['Formateur SR'] },
+  { nom:'Jeremy Bizzini', grade:'Adjudant-Chef', statut:'SPP', service:'CTA/CODIS / FORMATION', mat:'587923', casier:'1', qualifs:['Formateur', 'Opérateur CTA'] },
+  { nom:'Ston Golf', grade:'Médecin lieutenant', statut:'SPP', service:'SSSM / FORMATION', mat:'613298', casier:'10', qualifs:['Formateur SSSM','Apte'] },
+  { nom:'Atsuya Fubuki', grade:'Infirmier Principal', statut:'SPP', service:'SSSM', mat:'654123', casier:'12', qualifs:['Formateur'] },
+  { nom:'Ben Walter', grade:'Infirmier Principal', statut:'SPP', service:'SSSM', mat:'987453', casier:'7', qualifs:['Apte'] },
+  { nom:'Benoît Greedland', grade:'Caporal', statut:'SPP', service:'CTA/CODIS', mat:'751254', casier:'11', qualifs:['Apte','Opérateur CTA'] },
+  { nom:'Pawl Lesson', grade:'Infirmier', statut:'SPP', service:'SSSM', mat:'571025', casier:'21', qualifs:['Apte'] },
+  { nom:'Lucas Larafle', grade:'Sergent', statut:'SPP', service:'PRÉVISION / CTA/CODIS', mat:'785612', casier:'18', qualifs:['Apte','Opérateur CTA'] },
+  { nom:'Marc Folcko', grade:'Caporal-Chef', statut:'SPV', service:'-', mat:'468541', casier:'19', qualifs:['Apte COD1','Apte COD2'] },
+  { nom:'Felipe Marool', grade:'Caporal-Chef', statut:'SPP', service:'RECRUTEMENT', mat:'215687', casier:'6', qualifs:['Apte'] },
+  { nom:'Bastien César', grade:'Caporal', statut:'SPP', service:'REMISE/MATÉRIEL', mat:'687425', casier:'17', qualifs:['Formateur COD1','Formateur COD2'] },
+  { nom:'Pascual Marool', grade:'Sapeur 1ère classe', statut:'SPP', service:'RECRUTEMENT', mat:'953215', casier:'5', qualifs:['Apte'] },
+  { nom:'Mael Strom', grade:'Sapeur 2nd classe', statut:'SPV', service:'-', mat:'673948', casier:'-', qualifs:['Apte SSUAP'] },
+  { nom:'Johnson Davidson', grade:'Sapeur 1ère classe', statut:'SPP', service:'-', mat:'751247', casier:'15', qualifs:['Apte'] },
+  { nom:'McJohn Massimi', grade:'Sapeur 1ère classe', statut:'SPP', service:'-', mat:'954502', casier:'16', qualifs:['Apte'] },
+  { nom:'Johnson Macmon', grade:'Infirmier', statut:'SPP', service:'SSSM', mat:'584513', casier:'4', qualifs:['Apte'] },
+  { nom:'Mark Dublon', grade:'Sapeur 2nd classe', statut:'SPV', service:'-', mat:'147635', casier:'9', qualifs:['Apte'] },
+];
+
+const GRADE_CLASS = {
+  'Adjudant-Chef':'grade-adj','Médecin lieutenant':'grade-med',
+  'Infirmier Principal':'grade-inf','Infirmier':'grade-inf',
+  'Caporal-Chef':'grade-cap','Caporal':'grade-cap',
+  'Sergent':'grade-sgt',
+  'Sapeur 1ère classe':'grade-sap','Sapeur 2nd classe':'grade-sap',
+};
+
+let allPersonnel = [...PERSONNEL_STATIC];
+
+async function loadPersonnel() {
+  try {
+    const snap = await getDocs(collection(db, 'personnel'));
+    if (!snap.empty) {
+      allPersonnel = snap.docs.map(d => d.data());
+    }
+  } catch(e) { /* use static */ }
+  renderPersonnel(allPersonnel);
+}
+
+function renderPersonnel(list) {
+  const tbody = document.getElementById('personnel-tbody');
+  tbody.innerHTML = list.map(p => {
+    const gc = GRADE_CLASS[p.grade] || 'grade-sap';
+    const statPill = p.statut === 'SPP' ? 'pill-rouge' : 'pill-bleu';
+    const qualHtml = (p.qualifs || []).slice(0,2).map(q =>
+      `<span class="pill ${q.startsWith('Formateur') ? 'pill-bleu' : 'pill-vert'}" style="margin:1px;">${q}</span>`
+    ).join('');
+    return `<tr>
+      <td><strong>${p.nom}</strong></td>
+      <td><span class="grade-badge ${gc}">${p.grade}</span></td>
+      <td><span class="pill ${statPill}">${p.statut}</span></td>
+      <td style="font-size:11px;color:var(--texte-sec);">${p.service || '—'}</td>
+      <td><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;">${p.mat}</span></td>
+      <td style="text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;">${p.casier}</td>
+      <td>${qualHtml}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('doc-count').textContent = '42';
+}
+
+window.filterPersonnel = function() {
+  const q = document.getElementById('personnel-search').value.toLowerCase();
+  const filtered = allPersonnel.filter(p =>
+    p.nom.toLowerCase().includes(q) ||
+    p.grade.toLowerCase().includes(q) ||
+    p.service.toLowerCase().includes(q) ||
+    p.mat.includes(q)
+  );
+  renderPersonnel(filtered);
+};
+
+// ─── RECENT DOCS ───
+const RECENT_DOCS = [
+  { name:'NDS-007 — Délivrance de nourriture et d\'eau', date:'03/09/2025', type:'pdf' },
+  { name:'GPT Pharmacie — Gestion stocks/commandes', date:'03/09/2025', type:'xls' },
+  { name:'Fiche de service — Remise – matériels', date:'21/09/2025', type:'doc' },
+  { name:'NDS – RH', date:'21/09/2025', type:'pdf' },
+  { name:'Inventaire VSAV', date:'03/09/2025', type:'xls' },
+];
+
+async function loadRecentDocs() {
+  const el = document.getElementById('recent-docs-list');
+  el.innerHTML = RECENT_DOCS.map(d => `
+    <div class="doc-item" onclick="openDoc('${d.name.replace(/'/g,"\\'")}')">
+      <div class="doc-icon ${d.type}">${d.type.toUpperCase()}</div>
+      <div class="doc-meta">
+        <div class="doc-name">${d.name}</div>
+        <div class="doc-date">Mis à jour ${d.date}</div>
+      </div>
+      <div class="doc-arrow">›</div>
+    </div>
+  `).join('');
+}
+
+// ─── NAVIGATION ───
+window.navigate = function(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page)?.classList.add('active');
+  if (el) el.classList.add('active');
+};
+
+// ─── TABS ───
+window.switchTab = function(section, tab, el) {
+  document.querySelectorAll(`[id^="${section}-"]`).forEach(c => c.classList.remove('active'));
+  el.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`${section}-${tab}`)?.classList.add('active');
+  el.classList.add('active');
+};
+
+// ─── MODAL ───
+window.openDoc = function(name) {
+  document.getElementById('modal-title').textContent = name;
+  document.getElementById('modal-overlay').classList.add('open');
+};
+window.closeModal = function(e) {
+  if (!e || e.target === document.getElementById('modal-overlay') || !e.target.closest) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+};
+</script>
+</body>
+</html>
